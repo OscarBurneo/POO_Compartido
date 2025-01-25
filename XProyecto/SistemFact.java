@@ -6,7 +6,9 @@ public class SistemFact {
     public static Scanner sc=new Scanner(System.in);
     public static File archive=new File("inventario_libros.txt");
     public static String[] product;
+    
 
+    
     public static void main(String[] args) {
         byte op;
         boolean val=false;
