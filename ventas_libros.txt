@@ -1,16 +1,7 @@
 
-Jhonatan ,Cien Años de Soledad ,7.99
-Jhonatan ,Fahrenheit 451 ,8.99
-Jhonatan Jara ,Rayuela ,6.5
-hgh ,Rayuela ,6.5
-j ,Fahrenheit 451 ,8.99
-J ,El Quijote ,14.99
-j ,Cien Años de Soledad ,7.99
-Jhonatan Jara ,El Quijote ,14.99
-Jhonatan Jara ,Matar a un Ruiseñor ,7.5
-jh ,Orgullo y Prejuicio ,3.7
-Jhonatan ,Matar a un Ruiseñor ,7.5
-j ,El Quijote ,14.99
-Jhonatan ,Matar a un Ruiseñor ,7.5
-1105040202, po, El Quijote, 14.99
-1105040202, po, Matar a un Ruiseñor, 7.5
+1150626073, Jhonatan Jara, Cien Años de Soledad, 7.99, 14 / Agosto / 2025, 2
+1150626073, Jhonatan Jara, Cien Años de Soledad, 7.99, 15 / Agosto / 2025, 1
+1150626073, Jhonatan Jara, Cien Años de Soledad, 7.99, 15 / Agosto / 2025, 1
+1150626073, 1, Cien Años de Soledad, 7.99, 15 / Agosto / 2025, 1
+1105635039, 2323, Fahrenheit 451, 8.99, 23 / Febrero / 2025, 6
+1105635039, 2323, El Quijote, 14.99, 23 / Febrero / 2025, 2

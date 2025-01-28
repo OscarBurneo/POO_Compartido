@@ -9,10 +9,10 @@ public class SistemFact {
     public static File archive = new File("../inventario_libros.txt");
     public static File archivoVentas = new File("../ventas_libros.txt");
     public static String[] product;
-    public static ArrayList<ArrayList<String[]>> ventas = new ArrayList<>();
     public static ArrayList<String> Name = new ArrayList<>();
     public static ArrayList<Double> Precio = new ArrayList<>();
     public static ArrayList<Integer> Stock = new ArrayList<>();
+    public static float iva = 0.12f;
 
     public static void main(String[] args) {
         byte op;
@@ -88,7 +88,8 @@ public class SistemFact {
     public static void nuevaVenta() {
 
         String nombre, producto, fechaActual, nombreMes, cedula;
-        int opcion, stock, dia, mes, year, dias, opcionNumero, cantidadProductos;
+        int opcion, stock, dia, mes, year, dias, opcionNumero, cantidadProductos, descuento = 0, descuentoOpcion;
+        float precioTotal;
         double precio;
         boolean diaCorrecto = false, condicion = true;
 
@@ -192,7 +193,9 @@ public class SistemFact {
                 try (FileWriter fw = new FileWriter(archivoVentas, true);
                         PrintWriter archivoWriter = new PrintWriter(fw)) {
 
-                    archivoWriter.println(cedula + ", " + nombre + ", " + producto + ", " + precio);
+                    archivoWriter
+                            .println(cedula + ", " + nombre + ", " + producto + ", " + precio + ", " + fechaActual
+                                    + ", " + cantidadProductos);
                     System.out.println("Venta registrada");
 
                     editarArchivo(producto, cantidadProductos);
@@ -217,6 +220,45 @@ public class SistemFact {
                 }
 
             }
+
+            System.out.println("==============================================");
+            System.out.println("               Descuento");
+            System.out.println("==============================================");
+
+            System.out.println("¿Existe descuento?");
+            System.out.println("    1) Si");
+            System.out.println("    2) No");
+            System.out.print("\nDigite su respuesta: ");
+
+            if (!sc.hasNextInt()) {
+                throw new Exception("El formato que digito para la opción es invalido");
+            }
+
+            descuentoOpcion = sc.nextInt();
+
+            if (descuentoOpcion < 1 || descuentoOpcion > 2) {
+                throw new Exception("La opcion que digito no esta dentro de los limites (1 - 2)");
+            }
+
+            if (descuentoOpcion == 1) {
+
+                System.out.print("\nDigite el porcentaje de descuento para su compra: ");
+
+                if (!sc.hasNextInt()) {
+                    throw new Exception("El valor ingresado en el descuento es incorrecto");
+                }
+
+                descuento = sc.nextInt();
+
+                if (descuento <= 0 || descuento >= 100) {
+                    throw new Exception("El descuento no esta dentro de los limites (1 - 100)");
+                }
+
+            }
+
+            precioTotal = CalculoPrecio(descuento, cedula, fechaActual);
+
+            MostrarFactura(precioTotal, cedula, fechaActual, nombre);
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
@@ -275,6 +317,132 @@ public class SistemFact {
             System.err.println("ERROR: " + e.getMessage());
         }
 
+    }
+
+    public static float CalculoPrecio(int descuento, String cedula, String fechaActual) {
+
+        float total = 0, sumaPrecio = 0, precio, totalMasIva = 0;
+        String[] producto;
+        int cantidad;
+
+        ArrayList<String> carrito = new ArrayList<>();
+
+        try {
+
+            carrito = LeerVentas(cedula, fechaActual);
+
+            for (String item : carrito) {
+
+                producto = item.split(":");
+                precio = Float.parseFloat(producto[3]);
+                cantidad = Integer.parseInt(producto[5]);
+                sumaPrecio += (precio * cantidad);
+
+            }
+
+            System.out.println(sumaPrecio);
+
+            total = sumaPrecio - (sumaPrecio * (descuento / 100));
+            totalMasIva = total + (total * iva);
+
+        } catch (Exception e) {
+            System.err.println("ERROR: " + e.getMessage());
+        }
+
+        return totalMasIva;
+
+    }
+
+    public static ArrayList<String> LeerVentas(String cedula, String fecha) {
+
+        ArrayList<String> ventas = new ArrayList<>();
+        String cedulaArray, nombre, producto, fechaArray;
+        float precio;
+        int cantidad;
+
+        try {
+
+            Scanner fl = new Scanner(archivoVentas);
+            while (fl.hasNextLine()) {
+                product = fl.nextLine().split(",");
+                if (product[0].length() > 22) {
+                    product[0] = product[0].substring(0, 22);
+                }
+
+                cedulaArray = product[0];
+                fechaArray = product[4].trim();
+
+                if (cedulaArray.equals(cedula) && fechaArray.equals(fecha.trim())) {
+                    nombre = product[1];
+                    producto = product[2];
+                    precio = Float.parseFloat(product[3]);
+                    fecha = product[4].trim();
+                    cantidad = Integer.parseInt(product[5]);
+                    System.out.println("Cantidad: " + cantidad);
+                    ventas.add(cedula + ":" + nombre + ":" + producto + ":" + precio + ":" + fecha + ":" + cantidad);
+                }
+
+            }
+
+        } catch (Exception e) {
+            System.err.println("ERROR: " + e.getMessage());
+        }
+
+        return ventas;
+
+    }
+
+    public static void MostrarFactura(float precioTotal, String cedula, String fecha, String nombre) {
+
+        ArrayList<String> ventas = new ArrayList<>();
+        String[] linea;
+        String producto;
+        float precio;
+        int cantidad;
+
+        ventas = LeerVentas(cedula, fecha);
+
+        System.out.println();
+
+        System.out.println("==============================================");
+        System.out.println("                    FACTURA                   ");
+        System.out.println("               --- LIBRO LAB ---              ");
+        System.out.println("==============================================");
+        System.out.printf("R.U.C.: %-35s\n", "1790112233001");
+        System.out.printf("FACTURA NO.: %-30s\n", "002-001-123456789");
+        System.out.printf("AUT. SRI: %-31s\n", "1234567890");
+        System.out.println("----------------------------------------------");
+        System.out.println("Dirección Matriz: Páez N22-53 y Ramírez Dávalos");
+        System.out.println("Dirección Sucursal: García Moreno y Sucre");
+        System.out.println("----------------------------------------------");
+        System.out.printf("Sr(es): %-30s\n", nombre);
+        System.out.printf("R.U.C./C.I.: %-30s\n", cedula);
+        System.out.printf("Fecha Emisión: %-25s\n", fecha);
+        System.out.printf("Guía de Remisión: %-22s\n", "001-001-123456789");
+        System.out.println("----------------------------------------------");
+        System.out.printf("%-5s %-20s %-10s %-10s\n", "Cant", "Producto", "P. Unitario", "V. Total");
+
+        for (int i = 0; i < ventas.size(); i++) {
+
+            linea = ventas.get(i).split(":");
+            cantidad = Integer.parseInt(linea[5]);
+            producto = linea[2];
+            precio = Float.parseFloat(linea[3]);
+
+            System.out.println("----------------------------------------------");
+            System.out.printf("%-5d %-20s %-10.2f %-10.2f\n", cantidad, producto, precio, precio);
+
+        }
+
+        System.out.println("----------------------------------------------");
+        System.out.println("Válido para su emisión hasta 01-06-2018");
+        System.out.println("----------------------------------------------");
+        System.out.println("Forma de Pago:");
+        System.out.printf("%-25s: %.2f\n", "Efectivo", precioTotal);
+        System.out.println("----------------------------------------------");
+        System.out.printf("Subtotal 12%% IVA: %20.2f\n", 25.00);
+        System.out.printf("Subtotal 0%% IVA: %21.2f\n", 0.00);
+        System.out.printf("Subtotal sin impuestos: %14.2f\n", 25);
     }
 
 }
