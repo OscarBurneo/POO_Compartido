@@ -1,7 +1,0 @@
-
-1150626073, Jhonatan Jara, Cien Años de Soledad, 7.99, 14 / Agosto / 2025, 2
-1150626073, Jhonatan Jara, Cien Años de Soledad, 7.99, 15 / Agosto / 2025, 1
-1150626073, Jhonatan Jara, Cien Años de Soledad, 7.99, 15 / Agosto / 2025, 1
-1150626073, 1, Cien Años de Soledad, 7.99, 15 / Agosto / 2025, 1
-1105635039, 2323, Fahrenheit 451, 8.99, 23 / Febrero / 2025, 6
-1105635039, 2323, El Quijote, 14.99, 23 / Febrero / 2025, 2
