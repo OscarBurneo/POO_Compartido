@@ -160,13 +160,11 @@ public class SistemFact {
                 cantidadProductos = sc.nextInt();
                 sc.nextLine();
 
-                contadorLineas = ContarLineasArchivo();
-
                 if (!archivoVentas.exists()) {
                     archivoVentas.createNewFile();
                 }
 
-                System.out.println(precio);
+                contadorLineas = ContarLineasArchivo();
 
                 try (FileWriter fw = new FileWriter(archivoVentas, true);
                         PrintWriter archivoWriter = new PrintWriter(fw)) {
@@ -452,25 +450,15 @@ public class SistemFact {
         for (String venta : ventas) {
             String[] linea = venta.split(":");
 
-            System.out.println("hola");
             int numeroFactura = Integer.parseInt(linea[0]);
-            System.out.println("hola");
-            String cedulaUsuario = linea[1];
-            System.out.println("hola");
-            String nombreUsuario = linea[2];
-            System.out.println("hola");
-            String nombreProducto = linea[3];
-            System.out.println("hola");
-            String precio = linea[4].trim();
-            System.out.println("hola");
+            String cedulaUsuario = linea[1].trim();
+            String nombreUsuario = linea[2].trim();
+            String nombreProducto = linea[3].trim();
+            float precio = Float.parseFloat(linea[4].trim());
             String fechaFactura = linea[5].trim();
-            System.out.println(fechaFactura);
             int cantidad = Integer.parseInt(linea[6]);
-            System.out.println(cantidad);
-            String comprobar = linea[7].trim();
-            System.out.println(comprobar);
 
-            System.out.printf("%-5d %-20s %-10.2f %-10.2f\n", cantidad, nombreProducto, precio);
+            System.out.printf("%-5d %-20s %-10.2f %-10.2f\n", cantidad, nombreProducto, precio, precio * cantidad);
         }
 
         System.out.println("----------------------------------------------");

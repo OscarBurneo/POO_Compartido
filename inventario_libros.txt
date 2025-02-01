@@ -1,6 +1,6 @@
 El Quijote:14.99:0
 Cien Años de Soledad:7.99:1
-1984:8.5:14
+1984:8.5:9
 El Principito:4.99:7
 Rayuela:6.5:13
 La Sombra del Viento:7.8:18
