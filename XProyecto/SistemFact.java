@@ -203,6 +203,8 @@ public class SistemFact {
                 }
             }
 
+            ArrayList<String> ventas = LeerVentas(cedula, fechaFormateada);
+
             System.out.println("==============================================");
             System.out.println("               Descuento");
             System.out.println("==============================================");
@@ -216,7 +218,7 @@ public class SistemFact {
             try {
                 descuentoOpcion = Integer.parseInt(descuentoInput);
                 if (descuentoOpcion < 1 || descuentoOpcion > 2) {
-
+                    CambiarVentas(cedula, fechaFormateada, ventas);
                     throw new Exception("Opción fuera de límites (1 - 2)");
                 }
             } catch (NumberFormatException ex) {
@@ -229,6 +231,7 @@ public class SistemFact {
                 try {
                     descuento = Integer.parseInt(descuentoStr);
                     if (descuento < 0 || descuento >= 100) {
+                        CambiarVentas(cedula, fechaFormateada, ventas);
                         throw new Exception("El descuento debe estar entre 0% y 99%.");
                     }
                 } catch (NumberFormatException ex) {
@@ -526,7 +529,7 @@ public class SistemFact {
         }
 
         System.out.println("----------------------------------------------");
-        System.out.printf("%-30s: %.2f\n", "Subtotal 12% IVA", precioSub * iva);
+        System.out.printf("%-30s: %.2f\n", "Subtotal 15% IVA", precioSub * iva);
         System.out.printf("%-30s: %.2f\n", "Subtotal sin impuestos", precioSub);
         System.out.println("----------------------------------------------");
         System.out.printf("%-30s: %.2f\n", "Total", precioTotal);
