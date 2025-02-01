@@ -169,16 +169,24 @@ public class SistemFact {
                 try (FileWriter fw = new FileWriter(archivoVentas, true);
                         PrintWriter archivoWriter = new PrintWriter(fw)) {
 
-                    archivoWriter.println((contadorLineas + 1) + ": " + cedula + ": " + nombre + ": " + producto + ": "
-                            + precio
-                            + ": " + fechaActual
-                            + ": " + cantidadProductos + ": " + 0);
+                    boolean hecho = editarArchivo(producto, cantidadProductos);
+                    if (hecho == true) {
 
-                    System.out.println("=======================");
-                    System.out.println("  Venta registrada");
-                    System.out.println("=======================");
+                        archivoWriter
+                                .println((contadorLineas + 1) + ": " + cedula + ": " + nombre + ": " + producto + ": "
+                                        + precio
+                                        + ": " + fechaActual
+                                        + ": " + cantidadProductos + ": " + 0);
+                        System.out.println("=======================");
+                        System.out.println("  Venta registrada");
+                        System.out.println("=======================");
+                    } else if (hecho == false) {
+                        System.out.println("=======================");
+                        System.out.println("  Venta No registrada");
+                        System.out.println("=======================");
 
-                    editarArchivo(producto, cantidadProductos);
+                    }
+
                     ArrayList<String> ventas = LeerVentas(cedula, fechaFormateada);
 
                     System.out.println("\n¿Desea comprar otro producto?");
@@ -240,41 +248,51 @@ public class SistemFact {
             }
 
             precioTotal = CalculoPrecio(descuento, cedula, fechaFormateada);
-            MostrarFactura(precioTotal, cedula, fechaFormateada, nombre, contadorLineas);
+            MostrarFactura(precioTotal, cedula, fechaFormateada, nombre, contadorLineas, descuento);
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
         }
     }
 
-    public static void editarArchivo(String nombre, int cantidadProductos) {
+    public static boolean editarArchivo(String nombre, int cantidadProductos) {
 
         int c = 0;
         int stock;
-        String producto = "";
-        Double precio = 0.0;
-
-        for (String Nam : Name) {
-
-            if (Nam == nombre) {
-                stock = Stock.get(c);
-                stock -= cantidadProductos;
-                Stock.set(c, stock);
-            }
-
-            c++;
-
-        }
+        boolean did = false;
 
         try (FileWriter fw = new FileWriter(archive);
                 PrintWriter archivoWriter = new PrintWriter(fw)) {
 
-            for (int i = 0; i < Name.size(); i++) {
-                archivoWriter.println(Name.get(i) + ":" + Precio.get(i) + ":" + Stock.get(i));
-            }
+            for (String Nam : Name) {
 
+                if (Nam == nombre) {
+                    stock = Stock.get(c);
+                    if (stock <= 0 || cantidadProductos > stock) {
+                        System.err.println("Error: No hay suficiente stock para realizar la venta");
+                        did = false;
+                    } else {
+                        stock -= cantidadProductos;
+                        Stock.set(c, stock);
+                        did = true;
+                    }
+                }
+                c++;
+            }
+            if (did == true) {
+                for (int i = 0; i < Name.size(); i++) {
+                    archivoWriter.println(Name.get(i) + ":" + Precio.get(i) + ":" + Stock.get(i));
+                }
+                return did;
+            } else {
+                for (int i = 0; i < Name.size(); i++) {
+                    archivoWriter.println(Name.get(i) + ":" + Precio.get(i) + ":" + Stock.get(i));
+                }
+                return did;
+            }
         } catch (Exception e) {
             System.err.println("ERROR: " + e.getMessage());
+            return did;
         }
 
     }
@@ -434,8 +452,11 @@ public class SistemFact {
         }
     }
 
-    public static void MostrarFactura(float precioTotal, String cedula, String fecha, String nombre, int contador) {
+    public static void MostrarFactura(float precioTotal, String cedula, String fecha, String nombre, int contador,
+            float descuento) {
         ArrayList<String> ventas = LeerVentas(cedula, fecha);
+
+        descuento = descuento / 100;
 
         if (ventas == null || ventas.isEmpty()) {
             System.out.println("No se encontraron ventas para la cédula y fecha especificadas.");
@@ -485,11 +506,13 @@ public class SistemFact {
         }
 
         factura += "----------------------------------------------\n";
-        factura += String.format("%-30s: %.2f\n", "Subtotal 12% IVA", precioSub * iva);
-        factura += String.format("%-30s: %.2f\n", "Subtotal sin impuestos", precioSub);
+        factura += String.format("%-30s: %.2f\n", "Subtotal 15% IVA", precioSub * iva);
+        factura += String.format("%-30s: %.2f\n", "Subtotal sin impuestos", precioSub - (precioSub * descuento));
         factura += "----------------------------------------------\n";
-        factura += String.format("%-30s: %.2f\n", "Total", precioTotal);
+        factura += String.format("%-30s: %.2f\n", "Total", precioSub - (precioSub * descuento) + (precioSub * iva));
         factura += "----------------------------------------------\n";
+
+        precioSub = 0;
 
         System.out.println();
         System.out.println("==============================================");
@@ -530,9 +553,9 @@ public class SistemFact {
 
         System.out.println("----------------------------------------------");
         System.out.printf("%-30s: %.2f\n", "Subtotal 15% IVA", precioSub * iva);
-        System.out.printf("%-30s: %.2f\n", "Subtotal sin impuestos", precioSub);
+        System.out.printf("%-30s: %.2f\n", "Subtotal sin impuestos", precioSub - (precioSub * descuento));
         System.out.println("----------------------------------------------");
-        System.out.printf("%-30s: %.2f\n", "Total", precioTotal);
+        System.out.printf("%-30s: %.2f\n", "Total", precioSub - (precioSub * descuento) + (precioSub * iva));
         System.out.println("----------------------------------------------");
 
         CambiarVentas(cedula, fecha, ventas);
@@ -568,7 +591,25 @@ public class SistemFact {
     }
 
     public static void GuardarFactura(String factura, int contador) {
+        String archivoNombre = "../facturas.txt";
 
+        try {
+            File archivo = new File(archivoNombre);
+            if (!archivo.exists()) {
+                archivo.createNewFile();
+            }
+
+            try (FileWriter fw = new FileWriter(archivo, true);
+                    PrintWriter archivoWriter = new PrintWriter(fw)) {
+
+                archivoWriter.println("Factura " + contador + ": " + factura);
+
+            }
+            System.out.println("Factura guardada correctamente.");
+
+        } catch (IOException e) {
+            System.err.println("ERROR al guardar la factura: " + e.getMessage());
+        }
     }
 
 }
