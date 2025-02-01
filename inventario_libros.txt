@@ -1,10 +1,10 @@
 El Quijote:14.99:0
 Cien Años de Soledad:7.99:1
-1984:8.5:15
-El Principito:4.99:18
+1984:8.5:14
+El Principito:4.99:7
 Rayuela:6.5:13
 La Sombra del Viento:7.8:18
 Crónica de una Muerte:5.5:17
-Orgullo y Prejuicio:3.7:11
+Orgullo y Prejuicio:3.7:10
 Fahrenheit 451:8.99:15
 Matar a un Ruiseñor:7.5:9

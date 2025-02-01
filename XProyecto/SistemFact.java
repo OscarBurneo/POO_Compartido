@@ -166,11 +166,13 @@ public class SistemFact {
                     archivoVentas.createNewFile();
                 }
 
+                System.out.println(precio);
+
                 try (FileWriter fw = new FileWriter(archivoVentas, true);
                         PrintWriter archivoWriter = new PrintWriter(fw)) {
 
                     archivoWriter.println((contadorLineas + 1) + ": " + cedula + ": " + nombre + ": " + producto + ": "
-                            + String.format("%.2f", precio)
+                            + precio
                             + ": " + fechaActual
                             + ": " + cantidadProductos + ": " + 0);
 
@@ -419,7 +421,6 @@ public class SistemFact {
     }
 
     public static void MostrarFactura(float precioTotal, String cedula, String fecha, String nombre) {
-
         ArrayList<String> ventas = LeerVentas(cedula, fecha);
 
         if (ventas == null || ventas.isEmpty()) {
@@ -429,8 +430,8 @@ public class SistemFact {
 
         System.out.println();
         System.out.println("==============================================");
-        System.out.println("                  FACTURA                   ");
-        System.out.println("               --- LIBRO LAB ---              ");
+        System.out.println("                FACTURA                       ");
+        System.out.println("           --- LIBRO LAB ---                   ");
         System.out.println("==============================================");
         System.out.printf("R.U.C.: %-35s\n", "1790112233001");
         System.out.printf("FACTURA NO.: %-30s\n", "002-001-123456789");
@@ -451,20 +452,25 @@ public class SistemFact {
         for (String venta : ventas) {
             String[] linea = venta.split(":");
 
-            if (linea.length >= 7 && linea[7].trim().equals("0")) {
-                try {
-                    String cantidad = linea[6].trim();
-                    String producto = linea[3].trim();
-                    String precio = linea[4].trim();
+            System.out.println("hola");
+            int numeroFactura = Integer.parseInt(linea[0]);
+            System.out.println("hola");
+            String cedulaUsuario = linea[1];
+            System.out.println("hola");
+            String nombreUsuario = linea[2];
+            System.out.println("hola");
+            String nombreProducto = linea[3];
+            System.out.println("hola");
+            String precio = linea[4].trim();
+            System.out.println("hola");
+            String fechaFactura = linea[5].trim();
+            System.out.println(fechaFactura);
+            int cantidad = Integer.parseInt(linea[6]);
+            System.out.println(cantidad);
+            String comprobar = linea[7].trim();
+            System.out.println(comprobar);
 
-                    System.out.println("----------------------------------------------");
-                    System.out.printf("%-5s %-20s %-10s %-10s\n", cantidad, producto, precio, 0);
-                } catch (NumberFormatException e) {
-                    System.err.println("Error al convertir cantidad o precio: " + venta);
-                }
-            } else {
-                System.err.println("Formato de venta incorrecto: " + venta);
-            }
+            System.out.printf("%-5d %-20s %-10.2f %-10.2f\n", cantidad, nombreProducto, precio);
         }
 
         System.out.println("----------------------------------------------");
@@ -474,7 +480,6 @@ public class SistemFact {
         System.out.printf("Subtotal sin impuestos: %14.2f\n", precioSub);
 
         CambiarVentas(cedula, fecha, ventas);
-
     }
 
     public static int ContarLineasArchivo() {
