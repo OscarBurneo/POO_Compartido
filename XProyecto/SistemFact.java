@@ -16,7 +16,7 @@ public class SistemFact {
     public static ArrayList<String> Name = new ArrayList<>();
     public static ArrayList<Double> Precio = new ArrayList<>();
     public static ArrayList<Integer> Stock = new ArrayList<>();
-    public static float iva = 0.12f;
+    public static float iva = 0.15f;
 
     public static void main(String[] args) {
         byte op;
@@ -273,7 +273,7 @@ public class SistemFact {
 
         float total = 0, sumaPrecio = 0, precio, totalMasIva = 0;
         String[] producto;
-        int cantidad;
+        int cantidad, comprobar;
 
         ArrayList<String> carrito = new ArrayList<>();
 
@@ -284,9 +284,15 @@ public class SistemFact {
             for (String item : carrito) {
 
                 producto = item.split(":");
-                precio = Float.parseFloat(producto[4]);
-                cantidad = Integer.parseInt(producto[6]);
-                sumaPrecio += (precio * cantidad);
+                comprobar = Integer.parseInt(producto[7]);
+
+                if (comprobar != 1) {
+
+                    precio = Float.parseFloat(producto[4]);
+                    cantidad = Integer.parseInt(producto[6]);
+                    sumaPrecio += (precio * cantidad);
+
+                }
 
             }
 
@@ -330,7 +336,7 @@ public class SistemFact {
 
                         ventas.add(product[0].trim() + ":" + product[1].trim() + ":" + product[2].trim() + ":"
                                 + product[3].trim() + ":" + product[4].trim() + ":"
-                                + fechaArray.trim() + ":" + product[6].trim());
+                                + fechaArray.trim() + ":" + product[6].trim() + ":" + product[7].trim());
 
                     } catch (NumberFormatException e) {
                         System.err.println("ERROR: Formato de número incorrecto en línea: " + linea);
@@ -450,22 +456,27 @@ public class SistemFact {
         for (String venta : ventas) {
             String[] linea = venta.split(":");
 
-            int numeroFactura = Integer.parseInt(linea[0]);
-            String cedulaUsuario = linea[1].trim();
-            String nombreUsuario = linea[2].trim();
-            String nombreProducto = linea[3].trim();
-            float precio = Float.parseFloat(linea[4].trim());
-            String fechaFactura = linea[5].trim();
-            int cantidad = Integer.parseInt(linea[6]);
+            int comprobar = Integer.parseInt(linea[7]);
 
-            System.out.printf("%-5d %-20s %-10.2f %-10.2f\n", cantidad, nombreProducto, precio, precio * cantidad);
+            if (comprobar != 1) {
+                int numeroFactura = Integer.parseInt(linea[0]);
+                String nombreProducto = linea[3].trim();
+                float precio = Float.parseFloat(linea[4].trim());
+                int cantidad = Integer.parseInt(linea[6]);
+
+                precioSub += (precio * cantidad);
+
+                System.out.printf("%-5d %-20s %-10.2f %-10.2f\n", cantidad, nombreProducto, precio, precio * cantidad);
+            }
+
         }
 
         System.out.println("----------------------------------------------");
-        System.out.printf("%-25s: %.2f\n", "Efectivo", precioTotal);
+        System.out.printf("Subtotal 12%% IVA: %26.2f\n", precioSub * iva);
+        System.out.printf("Subtotal sin impuestos: %18.2f\n", precioSub);
         System.out.println("----------------------------------------------");
-        System.out.printf("Subtotal 12%% IVA: %20.2f\n", precioSub * 0.12);
-        System.out.printf("Subtotal sin impuestos: %14.2f\n", precioSub);
+        System.out.printf("%-37s: %.2f\n", "Total", precioTotal);
+        System.out.println("----------------------------------------------");
 
         CambiarVentas(cedula, fecha, ventas);
     }

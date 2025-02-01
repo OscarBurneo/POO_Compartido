@@ -1,3 +1,12 @@
 1:1150626073:Jhonatan Jara:1984:8.5:2025-01-31:1:1
 2:1150626073:Jhonatan:1984:8.5:2025-01-31:1:1
 3:1150626073:Jhonatan Jara:1984:8.5:2025-01-31:1:1
+4:1150626073:Jhonatan Jara:1984:8.5:2025-01-31:1:1
+5:1150626073:j:La Sombra del Viento:7.8:2025-01-31:1:1
+6:1150626073:Jhonatan Jara:1984:8.5:2025-01-31:4:1
+7:1150626073:Jhonatan Jara:El Principito:4.99:2025-01-31:2:1
+8:1150626073:Jhonatan Jara:1984:8.5:2025-01-31:1:1
+9:1150626073:Jhonatan Jara:Matar a un Ruiseñor:7.5:2025-01-31:3:1
+10:1150626073:Jhonatan Jara:Cien Años de Soledad:7.99:2025-01-31:1:1
+11:1150626073:Jhonatan Jara:Matar a un Ruiseñor:7.5:2025-01-31:5:1
+12:1150626073:Jhonatan Jara:Fahrenheit 451:8.99:2025-01-31:5:1
