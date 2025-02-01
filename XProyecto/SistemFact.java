@@ -114,7 +114,7 @@ public class SistemFact {
 
     public static void nuevaVenta() {
         String nombre, producto, cedula;
-        int opcion, cantidadProductos, descuento = 0, descuentoOpcion, contadorLineas;
+        int opcion, cantidadProductos, descuento = 0, descuentoOpcion, contadorLineas = 0;
         float precioTotal;
         double precio;
         boolean condicion = true;
@@ -179,6 +179,7 @@ public class SistemFact {
                     System.out.println("=======================");
 
                     editarArchivo(producto, cantidadProductos);
+                    ArrayList<String> ventas = LeerVentas(cedula, fechaFormateada);
 
                     System.out.println("\n¿Desea comprar otro producto?");
                     System.out.println("    1) Sí");
@@ -188,8 +189,13 @@ public class SistemFact {
                     String opcionInput = sc.nextLine();
                     try {
                         int opcionNumero = Integer.parseInt(opcionInput);
-                        if (opcionNumero < 1 || opcionNumero > 2)
+
+                        if (opcionNumero < 1 || opcionNumero > 2) {
+
+                            CambiarVentas(cedula, fechaFormateada, ventas);
                             throw new Exception("Opción fuera de límites (1 - 2)");
+                        }
+
                         condicion = (opcionNumero == 1);
                     } catch (NumberFormatException ex) {
                         throw new Exception("Formato de la opción ingresada incorrecto.");
@@ -210,6 +216,7 @@ public class SistemFact {
             try {
                 descuentoOpcion = Integer.parseInt(descuentoInput);
                 if (descuentoOpcion < 1 || descuentoOpcion > 2) {
+
                     throw new Exception("Opción fuera de límites (1 - 2)");
                 }
             } catch (NumberFormatException ex) {
@@ -230,7 +237,7 @@ public class SistemFact {
             }
 
             precioTotal = CalculoPrecio(descuento, cedula, fechaFormateada);
-            MostrarFactura(precioTotal, cedula, fechaFormateada, nombre);
+            MostrarFactura(precioTotal, cedula, fechaFormateada, nombre, contadorLineas);
 
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
@@ -424,7 +431,7 @@ public class SistemFact {
         }
     }
 
-    public static void MostrarFactura(float precioTotal, String cedula, String fecha, String nombre) {
+    public static void MostrarFactura(float precioTotal, String cedula, String fecha, String nombre, int contador) {
         ArrayList<String> ventas = LeerVentas(cedula, fecha);
 
         if (ventas == null || ventas.isEmpty()) {
@@ -432,10 +439,59 @@ public class SistemFact {
             return;
         }
 
+        String factura = "";
+
+        factura += "\n";
+        factura += "==============================================\n";
+        factura += "                 FACTURA                      \n";
+        factura += "             --- LIBRO LAB ---                \n";
+        factura += "==============================================\n";
+        factura += String.format("R.U.C.: %-35s\n", "1790112233001");
+        factura += String.format("FACTURA NO.: %-30s\n", contador);
+        factura += String.format("AUT. SRI: %-31s\n", "1234567890");
+        factura += "----------------------------------------------\n";
+        factura += "Dirección Matriz: Páez N22-53 y Ramírez Dávalos\n";
+        factura += "Dirección Sucursal: García Moreno y Sucre\n";
+        factura += "----------------------------------------------\n";
+        factura += String.format("Sr(es): %-30s\n", nombre);
+        factura += String.format("R.U.C./C.I.: %-30s\n", cedula);
+        factura += String.format("Fecha Emisión: %-25s\n", fecha);
+        factura += String.format("Guía de Remisión: %-22s\n", "001-001-123456789");
+        factura += "----------------------------------------------\n";
+        factura += String.format("%-5s %-20s %-12s %-12s\n", "Cant", "Producto", "P. Unitario", "V. Total");
+
+        float precioSub = 0;
+
+        factura += "----------------------------------------------\n";
+
+        for (String venta : ventas) {
+            String[] linea = venta.split(":");
+            int comprobar = Integer.parseInt(linea[7]);
+
+            if (comprobar != 1) {
+                int cantidad = Integer.parseInt(linea[6]);
+                String nombreProducto = linea[3].trim();
+                float precio = Float.parseFloat(linea[4].trim());
+                float totalProducto = precio * cantidad;
+
+                precioSub += totalProducto;
+
+                factura += String.format("%-5d %-20s %-12.2f %-12.2f\n", cantidad, nombreProducto, precio,
+                        totalProducto);
+            }
+        }
+
+        factura += "----------------------------------------------\n";
+        factura += String.format("%-30s: %.2f\n", "Subtotal 12% IVA", precioSub * iva);
+        factura += String.format("%-30s: %.2f\n", "Subtotal sin impuestos", precioSub);
+        factura += "----------------------------------------------\n";
+        factura += String.format("%-30s: %.2f\n", "Total", precioTotal);
+        factura += "----------------------------------------------\n";
+
         System.out.println();
         System.out.println("==============================================");
-        System.out.println("                FACTURA                       ");
-        System.out.println("           --- LIBRO LAB ---                   ");
+        System.out.println("                 FACTURA                      ");
+        System.out.println("             --- LIBRO LAB ---                ");
         System.out.println("==============================================");
         System.out.printf("R.U.C.: %-35s\n", "1790112233001");
         System.out.printf("FACTURA NO.: %-30s\n", "002-001-123456789");
@@ -449,36 +505,35 @@ public class SistemFact {
         System.out.printf("Fecha Emisión: %-25s\n", fecha);
         System.out.printf("Guía de Remisión: %-22s\n", "001-001-123456789");
         System.out.println("----------------------------------------------");
-        System.out.printf("%-5s %-20s %-10s %-10s\n", "Cant", "Producto", "P. Unitario", "V. Total");
+        System.out.printf("%-5s %-20s %-12s %-12s\n", "Cant", "Producto", "P. Unitario", "V. Total");
 
-        float precioSub = 0;
+        System.out.println("----------------------------------------------");
 
         for (String venta : ventas) {
             String[] linea = venta.split(":");
-
             int comprobar = Integer.parseInt(linea[7]);
 
             if (comprobar != 1) {
-                int numeroFactura = Integer.parseInt(linea[0]);
+                int cantidad = Integer.parseInt(linea[6]);
                 String nombreProducto = linea[3].trim();
                 float precio = Float.parseFloat(linea[4].trim());
-                int cantidad = Integer.parseInt(linea[6]);
+                float totalProducto = precio * cantidad;
 
-                precioSub += (precio * cantidad);
+                precioSub += totalProducto;
 
-                System.out.printf("%-5d %-20s %-10.2f %-10.2f\n", cantidad, nombreProducto, precio, precio * cantidad);
+                System.out.printf("%-5d %-20s %-12.2f %-12.2f\n", cantidad, nombreProducto, precio, totalProducto);
             }
-
         }
 
         System.out.println("----------------------------------------------");
-        System.out.printf("Subtotal 12%% IVA: %26.2f\n", precioSub * iva);
-        System.out.printf("Subtotal sin impuestos: %18.2f\n", precioSub);
+        System.out.printf("%-30s: %.2f\n", "Subtotal 12% IVA", precioSub * iva);
+        System.out.printf("%-30s: %.2f\n", "Subtotal sin impuestos", precioSub);
         System.out.println("----------------------------------------------");
-        System.out.printf("%-37s: %.2f\n", "Total", precioTotal);
+        System.out.printf("%-30s: %.2f\n", "Total", precioTotal);
         System.out.println("----------------------------------------------");
 
         CambiarVentas(cedula, fecha, ventas);
+        GuardarFactura(factura, contador);
     }
 
     public static int ContarLineasArchivo() {
@@ -506,6 +561,10 @@ public class SistemFact {
         }
 
         return contador;
+
+    }
+
+    public static void GuardarFactura(String factura, int contador) {
 
     }
 
