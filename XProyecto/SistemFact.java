@@ -17,6 +17,7 @@ public class SistemFact {
     public static ArrayList<Double> Precio = new ArrayList<>();
     public static ArrayList<Integer> Stock = new ArrayList<>();
     public static float iva = 0.15f;
+    
 
     public static void main(String[] args) {
         byte op;
@@ -168,17 +169,25 @@ public class SistemFact {
 
                 try (FileWriter fw = new FileWriter(archivoVentas, true);
                         PrintWriter archivoWriter = new PrintWriter(fw)) {
+                    
+                    boolean hecho=editarArchivo(producto, cantidadProductos);
+                    if (hecho==true){
 
                     archivoWriter.println((contadorLineas + 1) + ": " + cedula + ": " + nombre + ": " + producto + ": "
                             + precio
                             + ": " + fechaActual
                             + ": " + cantidadProductos + ": " + 0);
+                        System.out.println("=======================");
+                        System.out.println("  Venta registrada");
+                        System.out.println("=======================");
+                    }else if (hecho==false) {
+                        System.out.println("=======================");
+                        System.out.println("  Venta No registrada");
+                        System.out.println("=======================");
 
-                    System.out.println("=======================");
-                    System.out.println("  Venta registrada");
-                    System.out.println("=======================");
+                    }
 
-                    editarArchivo(producto, cantidadProductos);
+                    
                     ArrayList<String> ventas = LeerVentas(cedula, fechaFormateada);
 
                     System.out.println("\n¿Desea comprar otro producto?");
@@ -247,34 +256,43 @@ public class SistemFact {
         }
     }
 
-    public static void editarArchivo(String nombre, int cantidadProductos) {
+    public static boolean editarArchivo(String nombre, int cantidadProductos) {
 
         int c = 0;
         int stock;
-        String producto = "";
-        Double precio = 0.0;
+        boolean did=false;
+        
+        try (FileWriter fw = new FileWriter(archive);
+                PrintWriter archivoWriter = new PrintWriter(fw)) {
 
         for (String Nam : Name) {
 
             if (Nam == nombre) {
                 stock = Stock.get(c);
-                stock -= cantidadProductos;
+                if (stock<=0||cantidadProductos>stock){
+                    System.err.println("Error: No hay suficiente stock para realizar la venta");
+                    did=false;
+                }else{
+                    stock -= cantidadProductos;
                 Stock.set(c, stock);
+                did=true;}
             }
-
             c++;
-
         }
-
-        try (FileWriter fw = new FileWriter(archive);
-                PrintWriter archivoWriter = new PrintWriter(fw)) {
-
+        if (did==true) {
             for (int i = 0; i < Name.size(); i++) {
                 archivoWriter.println(Name.get(i) + ":" + Precio.get(i) + ":" + Stock.get(i));
             }
-
+            return did;
+        }else{
+            for (int i = 0; i < Name.size(); i++) {
+                archivoWriter.println(Name.get(i) + ":" + Precio.get(i) + ":" + Stock.get(i));
+            }
+            return did;
+        }
         } catch (Exception e) {
             System.err.println("ERROR: " + e.getMessage());
+            return did;
         }
 
     }
