@@ -10,6 +10,7 @@ public class Estudiante extends Persona {
         this.promedio = promedio;
     }
     public void MostrarDatos() {
+        System.out.println("\nEstudiante: ");
         super.MostrarDatos();
         System.out.println(" Carrera: " + carrera);
         System.out.println(" Promedio: " + promedio);

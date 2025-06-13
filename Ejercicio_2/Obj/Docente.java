@@ -7,6 +7,7 @@ public class Docente extends Persona{
         this.Materia = Materia;
     }
     public void MostrarDatos() {
+        System.out.println("\nDocente: ");
         super.MostrarDatos();
         System.out.println(" Materia que imparte: " + Materia);
     }

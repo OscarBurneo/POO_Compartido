@@ -7,6 +7,7 @@ public class Administrativo extends Persona {
         this.departamento = departamento;
     }
     public void MostrarDatos() {
+        System.out.println("\nPersonal Administrativo: ");
         super.MostrarDatos();
         System.out.println(" Departamento al que corresponde: " + departamento);
     }
